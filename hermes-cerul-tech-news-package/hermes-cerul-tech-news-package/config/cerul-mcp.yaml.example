@@ -1,0 +1,12 @@
+mcp_servers:
+  cerul:
+    url: "https://api.cerul.ai/mcp?apiKey=${CERUL_API_KEY}"
+    enabled: true
+    timeout: 120
+    connect_timeout: 30
+    tools:
+      include:
+        - cerul_search
+        - cerul_usage
+      resources: false
+      prompts: false
