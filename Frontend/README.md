@@ -4,13 +4,20 @@
 
 ## 运行方式
 
-这是一个零构建静态页面，直接打开 `index.html` 即可预览。
+现在推荐从项目根目录启动本地后端，这样前端会调用 Hermes Agent：
 
-如果你本地习惯用静态服务器，也可以在当前目录执行任一方式：
+```bash
+cd /Users/meng/Documents/Codex/2026-04-24/github/hermes-main
+npm start
+```
 
-- `python -m http.server 8000`
-- `npx serve .`
-- VS Code Live Server
+然后打开 `http://127.0.0.1:3000`。
+
+这个本地后端会代理到 Hermes API server，默认地址是 `http://127.0.0.1:8643/v1/chat/completions`。如果端口不同，可以用环境变量覆盖：
+
+```bash
+HERMES_API_URL=http://127.0.0.1:8643/v1/chat/completions npm start
+```
 
 ## 当前包含的前端模块
 

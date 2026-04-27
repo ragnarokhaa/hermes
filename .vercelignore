@@ -1,0 +1,7 @@
+docs
+tests
+config
+hermes-cerul-tech-news-package
+frontend-server.log
+frontend-server.pid
+server.js

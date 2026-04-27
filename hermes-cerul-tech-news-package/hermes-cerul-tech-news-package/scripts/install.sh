@@ -50,6 +50,7 @@ cerul_block = [
     "    enabled: true",
     "    timeout: 120",
     "    connect_timeout: 30",
+    "    request_interval: 2.2",
     "    tools:",
     "      include:",
     "      - cerul_search",

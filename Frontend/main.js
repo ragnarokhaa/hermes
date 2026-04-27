@@ -156,6 +156,7 @@ const cases = [
 
 const conversations = [];
 let activeConversationId = null;
+let isSubmitting = false;
 
 const elements = {
   pageShell: document.querySelector(".page-shell"),
@@ -356,6 +357,11 @@ function workflowMarkup(data) {
           <p class="section-label">Key Frame Screenshot</p>
           <h3>${escapeHtml(media.frameTimestamp)}</h3>
           <div class="keyframe-preview ${escapeHtml(media.frameClass)}">
+            ${
+              media.keyframeUrl
+                ? `<img class="keyframe-image" src="${escapeHtml(media.keyframeUrl)}" alt="Cerul evidence key frame" />`
+                : ""
+            }
             <span class="keyframe-badge">${escapeHtml(media.frameTitle)}</span>
             <span class="preview-time">${escapeHtml(media.frameTimestamp)}</span>
           </div>
@@ -399,6 +405,23 @@ function turnMarkup(turn) {
             </div>
             ${workflowMarkup(data)}
           </div>
+          ${
+            data.evidence?.length
+              ? `
+                <div class="section-card sources-card evidence-card">
+                  <div class="section-card-head">
+                    <div>
+                      <p class="section-label">Evidence</p>
+                      <h3>Sources returned by Hermes</h3>
+                    </div>
+                  </div>
+                  <div class="evidence-list">
+                    ${evidenceMarkup(data.evidence)}
+                  </div>
+                </div>
+              `
+              : ""
+          }
         </section>
       </div>
     </article>
@@ -512,13 +535,77 @@ function appendResult(result) {
 
   conversation.verdictLabel = result.verdictLabel;
   conversation.messages.push({ query: result.query, result });
+  const messageIndex = conversation.messages.length - 1;
   elements.quoteInput.value = "";
   resizeComposer();
   renderHistory();
   renderConversation(conversation);
+  return { conversation, messageIndex };
 }
 
-function submitVerification() {
+function replaceResult(conversation, messageIndex, result) {
+  conversation.messages[messageIndex] = { query: result.query, result };
+  conversation.verdictLabel = result.verdictLabel;
+  renderHistory();
+  renderConversation(conversation);
+}
+
+function createLoadingResult(query, speaker, type) {
+  return {
+    id: "loading",
+    speaker,
+    type,
+    query,
+    status: "pending",
+    verdictLabel: "Checking",
+    verdictTitle: "Hermes is checking",
+    summary: "Hermes Agent is searching video evidence through Cerul MCP.",
+    confidence: "Pending",
+    mediaEvidence: {
+      label: "Video Evidence",
+      source: "Hermes Agent",
+      provider: "Cerul MCP",
+      description: "Waiting for the agent to retrieve timestamped evidence.",
+      timestamp: "Searching",
+      linkLabel: "Tool call in progress",
+      clipLabel: "Pending clip",
+      frameTimestamp: "Searching",
+      frameTitle: "Pending frame",
+      frameNote: "A key frame will appear here if Cerul returns one.",
+      frameClass: "frame-archive",
+    },
+    evidence: [],
+  };
+}
+
+async function requestVerification(query, speaker, type, conversation) {
+  const response = await fetch("/api/verify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      query,
+      speaker,
+      type,
+      conversationHistory: (conversation?.messages || []).map((turn) => ({
+        query: turn.query,
+        verdictLabel: turn.result?.verdictLabel,
+        summary: turn.result?.summary,
+      })),
+    }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || data.error || "Verification request failed");
+  }
+  return data;
+}
+
+async function submitVerification() {
+  if (isSubmitting) {
+    return;
+  }
+
   const query = elements.quoteInput.value.trim();
   if (!query) {
     showInputHint("Please enter a quote, claim, or video description first.");
@@ -526,9 +613,29 @@ function submitVerification() {
   }
 
   hideInputHint();
-  const result = getActiveConversation() ? resolveFollowUp(query) : resolveInitialResult();
-  if (result) {
-    appendResult(result);
+  const speaker = elements.speakerInput.value.trim();
+  const type = elements.contentType.value;
+  const conversationBeforeSubmit = getActiveConversation();
+  const fallbackResult = conversationBeforeSubmit ? resolveFollowUp(query) : resolveInitialResult();
+  const pending = appendResult(createLoadingResult(query, speaker, type));
+
+  isSubmitting = true;
+  elements.startDemo.disabled = true;
+  elements.startDemo.textContent = "...";
+
+  try {
+    const result = await requestVerification(query, speaker, type, conversationBeforeSubmit);
+    replaceResult(pending.conversation, pending.messageIndex, result);
+  } catch (error) {
+    const result = fallbackResult || createLoadingResult(query, speaker, type);
+    result.verdictLabel = "Offline Mock";
+    result.verdictTitle = "Backend fallback";
+    result.summary = `${result.summary} Backend request failed: ${error.message}`;
+    replaceResult(pending.conversation, pending.messageIndex, result);
+  } finally {
+    isSubmitting = false;
+    elements.startDemo.disabled = false;
+    elements.startDemo.textContent = "↑";
   }
 }
 

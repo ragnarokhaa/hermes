@@ -346,6 +346,32 @@ def _safe_numeric(value, default, coerce=int, minimum=1):
         return default
 
 
+def _make_http_request_throttle(
+    min_interval,
+    *,
+    clock=time.monotonic,
+    sleep=asyncio.sleep,
+):
+    """Return an httpx request hook that spaces HTTP MCP requests apart."""
+    interval = _safe_numeric(min_interval, 0.0, float, minimum=0.0)
+    if interval <= 0:
+        return None
+
+    lock = asyncio.Lock()
+    last_request_at = 0.0
+
+    async def _throttle(_request):
+        nonlocal last_request_at
+        async with lock:
+            now = clock()
+            wait_for = interval - (now - last_request_at)
+            if wait_for > 0:
+                await sleep(wait_for)
+            last_request_at = clock()
+
+    return _throttle
+
+
 class SamplingHandler:
     """Handles sampling/createMessage requests for a single MCP server.
 
@@ -916,6 +942,13 @@ class MCPServerTask:
                 client_kwargs["headers"] = headers
             if _oauth_auth is not None:
                 client_kwargs["auth"] = _oauth_auth
+            throttle_hook = _make_http_request_throttle(
+                config.get("request_interval", config.get("rate_limit_delay", 0))
+            )
+            if throttle_hook is not None:
+                client_kwargs.setdefault("event_hooks", {}).setdefault("request", []).append(
+                    throttle_hook
+                )
 
             # Caller owns the client lifecycle — the SDK skips cleanup when
             # http_client is provided, so we wrap in async-with.

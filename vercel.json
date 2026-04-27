@@ -1,0 +1,26 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/*.js": {
+      "maxDuration": 60
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/Frontend/index.html"
+    },
+    {
+      "source": "/assets/(.*)",
+      "destination": "/Frontend/assets/$1"
+    },
+    {
+      "source": "/styles.css",
+      "destination": "/Frontend/styles.css"
+    },
+    {
+      "source": "/main.js",
+      "destination": "/Frontend/main.js"
+    }
+  ]
+}

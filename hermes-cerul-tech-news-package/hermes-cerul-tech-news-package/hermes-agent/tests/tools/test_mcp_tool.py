@@ -82,6 +82,34 @@ class TestLoadMCPConfig:
 
 
 # ---------------------------------------------------------------------------
+# HTTP transport helpers
+# ---------------------------------------------------------------------------
+
+class TestHTTPTransportHelpers:
+    @pytest.mark.asyncio
+    async def test_request_throttle_waits_between_back_to_back_requests(self):
+        from tools.mcp_tool import _make_http_request_throttle
+
+        sleeps = []
+        times = iter([100.0, 100.0, 100.25, 100.25])
+
+        async def fake_sleep(delay):
+            sleeps.append(delay)
+
+        hook = _make_http_request_throttle(
+            1.0,
+            clock=lambda: next(times),
+            sleep=fake_sleep,
+        )
+
+        assert hook is not None
+        await hook(object())
+        await hook(object())
+
+        assert sleeps == [0.75]
+
+
+# ---------------------------------------------------------------------------
 # Schema conversion
 # ---------------------------------------------------------------------------
 

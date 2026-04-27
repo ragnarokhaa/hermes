@@ -350,6 +350,12 @@ button:hover {
   transform: translateY(-1px);
 }
 
+button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+  transform: none;
+}
+
 .primary-button,
 .secondary-button,
 .ghost-button {
@@ -1683,12 +1689,26 @@ textarea.input-error {
     linear-gradient(135deg, #dfd6ca, #bdb2a3 60%, #8f8577);
 }
 
+.keyframe-image {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .keyframe-preview::before,
 .keyframe-preview::after {
   content: "";
   position: absolute;
   border-radius: 999px;
   background: rgba(17, 17, 17, 0.55);
+}
+
+.keyframe-preview:has(.keyframe-image)::before,
+.keyframe-preview:has(.keyframe-image)::after {
+  content: none;
 }
 
 .keyframe-preview::before {
@@ -1738,6 +1758,7 @@ textarea.input-error {
 
 .keyframe-badge {
   position: absolute;
+  z-index: 2;
   top: 12px;
   left: 12px;
   display: inline-flex;
@@ -1748,6 +1769,12 @@ textarea.input-error {
   background: rgba(17, 17, 17, 0.72);
   font-size: 11px;
   font-weight: 700;
+}
+
+.evidence-list {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
 }
 
 .keyframe-note {
