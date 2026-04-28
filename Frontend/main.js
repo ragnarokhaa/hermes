@@ -1,167 +1,165 @@
 const cases = [
   {
-    id: "real-obama",
-    speaker: "Barack Obama",
+    id: "openai-gpt4o-launch",
+    speaker: "OpenAI",
     type: "speech",
-    title: "Obama 2004 keynote quote",
+    title: "OpenAI GPT-4o launch demo",
     query:
-      "Did Barack Obama say in the 2004 Democratic National Convention speech: There is not a liberal America and a conservative America; there is the United States of America.",
-    status: "true",
-    verdictLabel: "True News",
-    verdictTitle: "True News",
+      "Did OpenAI publicly demonstrate GPT-4o with real-time voice and vision capabilities during its launch event.",
     summary:
-      "The quote matches the original convention broadcast, official transcript material, and independent media transcripts.",
-    confidence: "98%",
+      "The claim matches the official launch video, product announcement, and media coverage describing the live multimodal demo.",
+    authenticity: 98,
     mediaEvidence: {
       label: "Primary video evidence",
-      source: "2004 Democratic National Convention keynote broadcast",
-      provider: "Public video archive",
+      source: "OpenAI spring launch presentation",
+      provider: "Official product event stream",
       description:
-        "The verified line appears in the full keynote recording, synchronized with the official transcript.",
-      timestamp: "12:41 - 12:52",
-      linkLabel: "Open archive clip",
-      clipLabel: "Speech clip",
-      frameTimestamp: "12:46",
+        "The source video shows the assistant responding in real time with voice, screen understanding, and multimodal interaction.",
+      timestamp: "09:12 - 09:48",
+      linkLabel: "Open launch clip",
+      clipLabel: "Launch demo",
+      frameTimestamp: "09:26",
       frameTitle: "Key frame",
       frameNote:
-        "Obama is at the podium as the verified sentence appears in the live broadcast frame.",
+        "The presenter is demonstrating live voice interaction while the model responds on screen.",
       frameClass: "frame-stage",
     },
     evidence: [
       {
-        type: "Official Transcript",
-        source: "DNC archive",
-        detail: "The line appears in the official speech transcript.",
+        type: "Official Announcement",
+        source: "OpenAI product page",
+        detail: "The launch materials describe GPT-4o as a multimodal model with voice, vision, and text capabilities.",
         score: "0.99",
       },
       {
         type: "Video",
-        source: "Convention broadcast",
-        detail: "The original speech video contains the sentence around 12:41.",
+        source: "Launch livestream",
+        detail: "The official event video shows the real-time multimodal demo around 09:12.",
         score: "0.97",
-        timestamp: "12:41 - 12:52",
+        timestamp: "09:12 - 09:48",
         action: "Video source",
       },
       {
-        type: "Media Transcript",
-        source: "News transcript",
-        detail: "Independent media transcripts match the same wording.",
+        type: "Tech Coverage",
+        source: "Press reports",
+        detail: "Independent reports describe the same launch demo and feature set.",
         score: "0.94",
       },
     ],
   },
   {
-    id: "fake-einstein",
-    speaker: "Albert Einstein",
+    id: "apple-free-macbook",
+    speaker: "Apple",
     type: "quote",
-    title: "Einstein false quote",
+    title: "Apple free MacBook rumor",
     query:
-      "Did Albert Einstein say: The definition of insanity is doing the same thing over and over and expecting different results.",
-    status: "false",
-    verdictLabel: "False News",
-    verdictTitle: "False News",
+      "Did Apple announce that it will give every university student a free MacBook starting this year.",
     summary:
-      "The claim circulates widely online, but there is no reliable primary-source evidence placing the quote in Einstein's verified writings or interviews.",
-    confidence: "92%",
+      "The rumor circulates on social platforms, but there is no credible primary-source evidence from Apple supporting the claim.",
+    authenticity: 8,
     mediaEvidence: {
       label: "Source search result",
-      source: "No primary-source video identified",
-      provider: "Archive scan",
+      source: "No official launch video identified",
+      provider: "Apple newsroom / event archive scan",
       description:
-        "Truth Hermes could not locate credible source footage tying this quote to Einstein.",
+        "Truth Hermes could not locate any official Apple event, newsroom post, or verified executive statement matching this rumor.",
       timestamp: "No verified timestamp",
-      linkLabel: "Review archive search",
+      linkLabel: "Review source search",
       clipLabel: "No clip found",
       frameTimestamp: "Archive gap",
       frameTitle: "Missing key frame",
       frameNote:
-        "No authenticated video frame exists for this claim, which is part of why the quote is flagged as false.",
+        "No authenticated source footage exists for this claim, which is part of why the story is flagged as fake.",
       frameClass: "frame-archive",
     },
     evidence: [
       {
-        type: "Quote Site",
-        source: "Secondary aggregation",
-        detail: "Widely repeated, but without a verifiable original source.",
+        type: "Rumor Posts",
+        source: "Social reposts",
+        detail: "The story spreads widely, but reposts do not cite a real Apple source.",
         score: "0.41",
       },
       {
-        type: "Archive Search",
-        source: "Biography corpus",
-        detail: "No direct evidence found in letters, books, or interviews.",
+        type: "Newsroom Search",
+        source: "Official Apple channels",
+        detail: "No evidence found in Apple newsroom announcements or keynote materials.",
         score: "0.18",
       },
       {
-        type: "Web Mentions",
-        source: "Social reposts",
-        detail: "The phrase is mostly repeated by citation loops.",
+        type: "Citation Check",
+        source: "Secondary coverage",
+        detail: "Articles and posts mainly loop back to each other without a primary announcement.",
         score: "0.27",
       },
     ],
   },
   {
-    id: "video-context",
-    speaker: "Candidate Video Sample",
+    id: "nvidia-chip-clip",
+    speaker: "NVIDIA keynote clip",
     type: "video",
-    title: "Misleading political clip",
+    title: "NVIDIA chip clip context",
     query:
-      "Is this campaign clip misleading because the surrounding context was removed.",
-    status: "mixed",
-    verdictLabel: "Misleading Clip",
-    verdictTitle: "Misleading Clip",
+      "Is this NVIDIA keynote clip misleading because the surrounding product context was removed.",
     summary:
-      "The original sentence exists, but the viral repost removes surrounding context and changes the meaning of the source clip.",
-    confidence: "89%",
+      "The original statement exists, but the reposted clip trims surrounding explanation and changes how the product claim is interpreted.",
+    authenticity: 61,
     mediaEvidence: {
       label: "Video comparison",
-      source: "Original upload vs repost",
-      provider: "Campaign channel / social repost",
+      source: "Full keynote vs reposted clip",
+      provider: "Official keynote / social repost",
       description:
-        "The original source clip and the repost diverge after the highlighted segment.",
-      timestamp: "01:18 - 01:29",
+        "The official keynote and the short repost diverge once the broader hardware limitations and context are removed.",
+      timestamp: "14:08 - 14:24",
       linkLabel: "Open comparison clips",
       clipLabel: "Clip comparison",
-      frameTimestamp: "01:24",
+      frameTimestamp: "14:16",
       frameTitle: "Key frame",
       frameNote:
-        "The frame captures the speaker just before the omitted clarification line.",
+        "The frame captures the presenter just before the omitted clarification about deployment conditions.",
       frameClass: "frame-clip",
     },
     evidence: [
       {
         type: "Original Upload",
-        source: "Official channel",
-        detail: "The full source includes extra context before and after the clip.",
+        source: "Official keynote video",
+        detail: "The full source includes additional product caveats before and after the clipped segment.",
         score: "0.93",
-        timestamp: "01:18 - 01:29",
+        timestamp: "14:08 - 14:24",
         action: "Original clip",
       },
       {
         type: "Repost Clip",
-        source: "Social media repost",
-        detail: "The viral version removes the clarification line.",
+        source: "Short-form repost",
+        detail: "The repost removes a clarification line and reframes the claim as absolute.",
         score: "0.56",
-        timestamp: "00:08 clip",
+        timestamp: "00:11 clip",
         action: "Repost clip",
       },
       {
         type: "Transcript Alignment",
         source: "ASR + manual sync",
-        detail: "Transcript comparison shows where the context was removed.",
+        detail: "Transcript comparison shows the exact point where contextual explanation was omitted.",
         score: "0.91",
       },
     ],
   },
-];
+].map(withVerdict);
 
 const conversations = [];
 let activeConversationId = null;
+let requestSequence = 0;
+let isRequestInFlight = false;
+let authMode = "register";
+
+const AUTH_USERS_KEY = "truth-hermes-users";
+const AUTH_SESSION_KEY = "truth-hermes-session";
 
 const elements = {
   pageShell: document.querySelector(".page-shell"),
   landing: document.querySelector("#landing-screen"),
   workspace: document.querySelector("#app-workspace"),
   chatHome: document.querySelector("#chat-home"),
+  chatGreeting: document.querySelector("#chat-greeting"),
   chatScroll: document.querySelector("#chat-scroll"),
   resultPanel: document.querySelector("#result-panel"),
   historyList: document.querySelector("#history-list"),
@@ -174,7 +172,153 @@ const elements = {
   contentType: document.querySelector("#content-type"),
   caseList: document.querySelector("#case-list"),
   startDemo: document.querySelector("#start-demo"),
+  authModal: document.querySelector("#auth-modal"),
+  authBackdrop: document.querySelector("#auth-backdrop"),
+  authClose: document.querySelector("#auth-close"),
+  authTitle: document.querySelector("#auth-title"),
+  authCopy: document.querySelector("#auth-copy"),
+  authForm: document.querySelector("#auth-form"),
+  authNameField: document.querySelector("#auth-name-field"),
+  authName: document.querySelector("#auth-name"),
+  authIdentifier: document.querySelector("#auth-identifier"),
+  authPassword: document.querySelector("#auth-password"),
+  authError: document.querySelector("#auth-error"),
+  authSubmit: document.querySelector("#auth-submit"),
+  authMeta: document.querySelector("#auth-meta"),
+  authMetaSwitch: document.querySelector("#auth-meta-switch"),
+  authModeRegister: document.querySelector("#auth-mode-register"),
+  authModeLogin: document.querySelector("#auth-mode-login"),
+  accountPanel: document.querySelector("#account-panel"),
+  accountName: document.querySelector("#account-name"),
+  logoutButton: document.querySelector("#logout-button"),
 };
+
+function sanitizeComposerUi() {
+  document.querySelectorAll(".composer-tools, .tool-button").forEach((node) => {
+    node.remove();
+  });
+}
+
+function loadUsers() {
+  try {
+    return JSON.parse(window.localStorage.getItem(AUTH_USERS_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function saveUsers(users) {
+  window.localStorage.setItem(AUTH_USERS_KEY, JSON.stringify(users));
+}
+
+function loadSession() {
+  try {
+    return JSON.parse(window.localStorage.getItem(AUTH_SESSION_KEY) || "null");
+  } catch {
+    return null;
+  }
+}
+
+function saveSession(session) {
+  window.localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(session));
+}
+
+function clearSession() {
+  window.localStorage.removeItem(AUTH_SESSION_KEY);
+}
+
+function normalizeIdentifier(value) {
+  const raw = String(value || "").trim();
+  const compact = raw.replace(/\s+/g, "");
+  if (compact.includes("@")) {
+    return compact.toLowerCase();
+  }
+
+  const digits = compact.replace(/[^\d+]/g, "");
+  if (digits.startsWith("+")) {
+    return `+${digits.slice(1).replace(/\D/g, "")}`;
+  }
+
+  return digits.replace(/\D/g, "");
+}
+
+function validateIdentifier(value) {
+  const normalized = normalizeIdentifier(value);
+  const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized);
+  const numeric = normalized.replace(/^\+/, "");
+  const isPhone = /^\d{7,15}$/.test(numeric);
+
+  if (!isEmail && !isPhone) {
+    return null;
+  }
+
+  return normalized;
+}
+
+function showAuthError(message) {
+  elements.authError.textContent = message;
+  elements.authError.classList.remove("is-hidden");
+}
+
+function hideAuthError() {
+  elements.authError.textContent = "";
+  elements.authError.classList.add("is-hidden");
+}
+
+function updateAccountUi(session) {
+  if (!session?.name) {
+    elements.accountPanel?.classList.add("is-hidden");
+    elements.accountName.textContent = "Guest";
+    elements.chatGreeting.textContent = "Hello, Truer";
+    return;
+  }
+
+  elements.accountName.textContent = session.name;
+  elements.chatGreeting.textContent = `Hello, ${session.name}`;
+  elements.accountPanel?.classList.remove("is-hidden");
+}
+
+function resetAuthForm() {
+  elements.authForm?.reset();
+  hideAuthError();
+}
+
+function setAuthMode(mode) {
+  authMode = mode === "login" ? "login" : "register";
+  const isLogin = authMode === "login";
+
+  elements.authTitle.textContent = isLogin ? "Welcome back" : "Create your account";
+  elements.authCopy.textContent = isLogin
+    ? "Log in with the email address or mobile number you registered with."
+    : "Use your email address or mobile number to create a local demo account.";
+  elements.authSubmit.textContent = isLogin ? "Log in" : "Create account";
+  elements.authMeta.firstChild.textContent = isLogin
+    ? "Need an account? "
+    : "Already have an account? ";
+  elements.authMetaSwitch.textContent = isLogin ? "Sign up" : "Log in";
+  elements.authNameField.classList.toggle("is-hidden", isLogin);
+  elements.authModeRegister.classList.toggle("is-active", !isLogin);
+  elements.authModeLogin.classList.toggle("is-active", isLogin);
+  elements.authPassword.autocomplete = isLogin ? "current-password" : "new-password";
+  hideAuthError();
+}
+
+function openAuthModal(mode = "register") {
+  setAuthMode(mode);
+  resetAuthForm();
+  elements.authModal.classList.remove("is-hidden");
+  elements.authModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  window.setTimeout(() => {
+    (authMode === "login" ? elements.authIdentifier : elements.authName)?.focus();
+  }, 0);
+}
+
+function closeAuthModal() {
+  elements.authModal.classList.add("is-hidden");
+  elements.authModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+}
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -187,6 +331,41 @@ function escapeHtml(value) {
 
 function normalize(text) {
   return text.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function classifyAuthenticity(score) {
+  if (score < 20) {
+    return {
+      status: "false",
+      verdictLabel: "Fake",
+      verdictTitle: "Fake",
+    };
+  }
+
+  if (score > 80) {
+    return {
+      status: "true",
+      verdictLabel: "True",
+      verdictTitle: "True",
+    };
+  }
+
+  return {
+    status: "pending",
+    verdictLabel: "Need Review",
+    verdictTitle: "Need Review",
+  };
+}
+
+function withVerdict(result) {
+  const authenticity = Number.parseInt(result.authenticity, 10);
+
+  return {
+    ...result,
+    ...classifyAuthenticity(authenticity),
+    authenticity,
+    authenticityLabel: `${authenticity}%`,
+  };
 }
 
 function summarize(text) {
@@ -202,6 +381,14 @@ function showApp() {
   elements.pageShell.classList.add("app-active");
   elements.landing.classList.add("is-hidden");
   elements.workspace.classList.remove("is-hidden");
+  window.scrollTo({ top: 0, behavior: "auto" });
+}
+
+function showLanding() {
+  document.body.classList.remove("app-mode");
+  elements.pageShell.classList.remove("app-active");
+  elements.workspace.classList.add("is-hidden");
+  elements.landing.classList.remove("is-hidden");
   window.scrollTo({ top: 0, behavior: "auto" });
 }
 
@@ -233,7 +420,12 @@ function hideInputHint() {
 }
 
 function resizeComposer() {
-  return;
+  if (!elements.quoteInput) {
+    return;
+  }
+
+  elements.quoteInput.style.height = "0px";
+  elements.quoteInput.style.height = `${Math.min(elements.quoteInput.scrollHeight, 132)}px`;
 }
 
 function renderHistory() {
@@ -325,7 +517,7 @@ function workflowMarkup(data) {
           <p>${escapeHtml(data.summary)}</p>
           <div class="result-meta-row">
             <span class="status-pill ${escapeHtml(data.status)}">${escapeHtml(data.verdictLabel)}</span>
-            <span class="confidence-pill">Confidence ${escapeHtml(data.confidence)}</span>
+            <span class="confidence-pill">Authenticity ${escapeHtml(data.authenticityLabel)}</span>
           </div>
         </div>
       </article>
@@ -367,6 +559,26 @@ function workflowMarkup(data) {
 }
 
 function turnMarkup(turn) {
+  if (turn.isLoading) {
+    return `
+      <article class="thread-card thread-user">
+        <div class="thread-avatar">You</div>
+        <div class="thread-content">
+          <p class="section-label">Submitted Query</p>
+          <p class="thread-query">${escapeHtml(turn.query)}</p>
+        </div>
+      </article>
+      <article class="thread-card thread-assistant thread-assistant-loading">
+        <div class="thread-avatar thread-avatar-assistant">TH</div>
+        <div class="thread-content">
+          <div class="assistant-loading" aria-label="Truth Hermes is loading">
+            <span class="loading-dot"></span>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
   const data = turn.result;
   return `
     <article class="thread-card thread-user">
@@ -383,7 +595,7 @@ function turnMarkup(turn) {
           <div class="result-copy">
             <div class="result-meta-row">
               <span class="status-pill ${escapeHtml(data.status)}">${escapeHtml(data.verdictLabel)}</span>
-              <span class="confidence-pill">Confidence ${escapeHtml(data.confidence)}</span>
+              <span class="confidence-pill">Authenticity ${escapeHtml(data.authenticityLabel)}</span>
             </div>
             <h2>${escapeHtml(data.verdictTitle)}</h2>
             <p class="verdict-summary">${escapeHtml(data.summary)}</p>
@@ -410,10 +622,67 @@ function renderConversation(conversation) {
   revealConversation();
 }
 
-function resolveInitialResult() {
-  const query = elements.quoteInput.value.trim();
-  const speaker = elements.speakerInput.value.trim();
-  const type = elements.contentType.value;
+function ensureActiveConversation(query) {
+  let conversation = getActiveConversation();
+  if (!conversation) {
+    conversation = {
+      id: `conversation-${Date.now()}`,
+      title: summarize(query),
+      verdictLabel: "Checking",
+      messages: [],
+    };
+    conversations.unshift(conversation);
+    activeConversationId = conversation.id;
+  }
+
+  return conversation;
+}
+
+function appendLoadingTurn(query) {
+  const conversation = ensureActiveConversation(query);
+
+  conversation.messages.push({
+    query,
+    isLoading: true,
+  });
+
+  elements.quoteInput.value = "";
+  resizeComposer();
+  renderHistory();
+  renderConversation(conversation);
+
+  return conversation;
+}
+
+function replaceLoadingTurn(conversationId, result) {
+  const conversation = conversations.find((item) => item.id === conversationId);
+  if (!conversation) {
+    return;
+  }
+
+  const loadingIndex = conversation.messages.findIndex((item) => item.isLoading);
+  if (loadingIndex === -1) {
+    return;
+  }
+
+  conversation.verdictLabel = result.verdictLabel;
+  conversation.messages[loadingIndex] = {
+    query: result.query,
+    result,
+    isLoading: false,
+  };
+
+  renderHistory();
+
+  if (activeConversationId === conversation.id) {
+    renderConversation(conversation);
+  }
+}
+
+function resolveInitialResult(input = {}) {
+  const query = (input.query ?? elements.quoteInput.value).trim();
+  const speaker = (input.speaker ?? elements.speakerInput.value).trim();
+  const type = input.type ?? elements.contentType.value;
 
   if (!query) {
     return null;
@@ -436,17 +705,14 @@ function resolveInitialResult() {
     return match;
   }
 
-  return {
+  return withVerdict({
     id: "custom-fallback",
     speaker,
     type,
     query,
-    status: "pending",
-    verdictLabel: "Need Review",
-    verdictTitle: "Need Review",
     summary:
       "This query does not match a preset demo case yet. In the full product, Hermes would now search across videos, transcripts, and reporting archives.",
-    confidence: "61%",
+    authenticity: 61,
     mediaEvidence: null,
     evidence: [
       {
@@ -462,7 +728,7 @@ function resolveInitialResult() {
         score: "0.38",
       },
     ],
-  };
+  });
 }
 
 function resolveFollowUp(query) {
@@ -479,11 +745,12 @@ function resolveFollowUp(query) {
     type: previous.type,
     query,
     status: previous.status,
-    verdictLabel: "Follow-up",
-    verdictTitle: "Follow-up Detail",
+    verdictLabel: previous.verdictLabel,
+    verdictTitle: previous.verdictTitle,
     summary:
       `Based on the previous verification, the key evidence remains ${previous.mediaEvidence?.source || "the retrieved source set"}. The most relevant timestamp is ${previous.mediaEvidence?.timestamp || "pending"}, and the answer should be interpreted in that source context.`,
-    confidence: previous.confidence,
+    authenticity: previous.authenticity,
+    authenticityLabel: previous.authenticityLabel,
     mediaEvidence: previous.mediaEvidence,
     evidence: [
       {
@@ -497,28 +764,110 @@ function resolveFollowUp(query) {
   };
 }
 
-function appendResult(result) {
-  let conversation = getActiveConversation();
-  if (!conversation) {
-    conversation = {
-      id: `conversation-${Date.now()}`,
-      title: summarize(result.query),
-      verdictLabel: result.verdictLabel,
-      messages: [],
-    };
-    conversations.unshift(conversation);
-    activeConversationId = conversation.id;
+async function requestVerification(request) {
+  await new Promise((resolve) => {
+    window.setTimeout(resolve, 900);
+  });
+
+  if (request.isFollowUp) {
+    return resolveFollowUp(request.query);
   }
 
-  conversation.verdictLabel = result.verdictLabel;
-  conversation.messages.push({ query: result.query, result });
-  elements.quoteInput.value = "";
-  resizeComposer();
-  renderHistory();
-  renderConversation(conversation);
+  return resolveInitialResult(request);
 }
 
-function submitVerification() {
+function completeAuth(user) {
+  const session = {
+    id: user.id,
+    name: user.name,
+    identifier: user.identifier,
+  };
+
+  saveSession(session);
+  updateAccountUi(session);
+  closeAuthModal();
+  showApp();
+}
+
+function handleRegister() {
+  const name = elements.authName.value.trim();
+  const identifier = validateIdentifier(elements.authIdentifier.value);
+  const password = elements.authPassword.value;
+
+  if (!name) {
+    showAuthError("Please enter your display name.");
+    return;
+  }
+
+  if (!identifier) {
+    showAuthError("Use a valid email address or mobile number.");
+    return;
+  }
+
+  if (password.length < 6) {
+    showAuthError("Password must be at least 6 characters.");
+    return;
+  }
+
+  const users = loadUsers();
+  if (users.some((item) => item.identifier === identifier)) {
+    showAuthError("An account with that email or mobile number already exists.");
+    return;
+  }
+
+  const user = {
+    id: `user-${Date.now()}`,
+    name,
+    identifier,
+    password,
+    createdAt: new Date().toISOString(),
+  };
+
+  users.push(user);
+  saveUsers(users);
+  completeAuth(user);
+}
+
+function handleLogin() {
+  const identifier = validateIdentifier(elements.authIdentifier.value);
+  const password = elements.authPassword.value;
+
+  if (!identifier) {
+    showAuthError("Use the email address or mobile number linked to your account.");
+    return;
+  }
+
+  const user = loadUsers().find((item) => item.identifier === identifier);
+  if (!user) {
+    showAuthError("No account was found for that email or mobile number.");
+    return;
+  }
+
+  if (user.password !== password) {
+    showAuthError("Incorrect password.");
+    return;
+  }
+
+  completeAuth(user);
+}
+
+function handleAuthSubmit(event) {
+  event.preventDefault();
+  hideAuthError();
+
+  if (authMode === "login") {
+    handleLogin();
+    return;
+  }
+
+  handleRegister();
+}
+
+async function submitVerification() {
+  if (isRequestInFlight) {
+    return;
+  }
+
   const query = elements.quoteInput.value.trim();
   if (!query) {
     showInputHint("Please enter a quote, claim, or video description first.");
@@ -526,13 +875,32 @@ function submitVerification() {
   }
 
   hideInputHint();
-  const result = getActiveConversation() ? resolveFollowUp(query) : resolveInitialResult();
-  if (result) {
-    appendResult(result);
+  const request = {
+    query,
+    speaker: elements.speakerInput.value.trim(),
+    type: elements.contentType.value,
+    isFollowUp: !!getActiveConversation()?.messages.some((item) => item.result),
+  };
+  const conversation = appendLoadingTurn(query);
+  const currentRequest = ++requestSequence;
+  isRequestInFlight = true;
+
+  try {
+    const result = await requestVerification(request);
+
+    if (currentRequest !== requestSequence || !result) {
+      return;
+    }
+
+    replaceLoadingTurn(conversation.id, result);
+  } finally {
+    isRequestInFlight = false;
   }
 }
 
 function startNewChat() {
+  requestSequence += 1;
+  isRequestInFlight = false;
   activeConversationId = null;
   elements.quoteInput.value = "";
   resizeComposer();
@@ -545,8 +913,20 @@ function startNewChat() {
 }
 
 elements.tryGuest?.addEventListener("click", showApp);
-elements.authEntry?.addEventListener("click", () => {
-  window.alert("Sign up / Log in is a placeholder in this frontend demo.");
+elements.authEntry?.addEventListener("click", () => openAuthModal("register"));
+elements.authBackdrop?.addEventListener("click", closeAuthModal);
+elements.authClose?.addEventListener("click", closeAuthModal);
+elements.authForm?.addEventListener("submit", handleAuthSubmit);
+elements.authModeRegister?.addEventListener("click", () => setAuthMode("register"));
+elements.authModeLogin?.addEventListener("click", () => setAuthMode("login"));
+elements.authMetaSwitch?.addEventListener("click", () => {
+  setAuthMode(authMode === "login" ? "register" : "login");
+});
+elements.logoutButton?.addEventListener("click", () => {
+  clearSession();
+  updateAccountUi(null);
+  closeAuthModal();
+  showLanding();
 });
 elements.newChat?.addEventListener("click", startNewChat);
 elements.startDemo?.addEventListener("click", submitVerification);
@@ -556,6 +936,10 @@ elements.quoteInput?.addEventListener("input", () => {
 });
 elements.quoteInput?.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
+    if (event.shiftKey) {
+      return;
+    }
+
     event.preventDefault();
     submitVerification();
   }
@@ -587,6 +971,21 @@ elements.historyList?.addEventListener("click", (event) => {
   renderConversation(match);
 });
 
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !elements.authModal?.classList.contains("is-hidden")) {
+    closeAuthModal();
+  }
+});
+
 renderCases();
 renderHistory();
 resizeComposer();
+sanitizeComposerUi();
+
+const session = loadSession();
+if (session?.name) {
+  updateAccountUi(session);
+  showApp();
+} else {
+  updateAccountUi(null);
+}
