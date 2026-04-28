@@ -31,7 +31,7 @@ body {
   margin: 0;
   min-height: 100vh;
   overflow: hidden;
-  font-family: "Libre Franklin", "Noto Sans SC", sans-serif;
+  font-family: "Inter", "Noto Sans SC", system-ui, sans-serif;
   color: var(--ink);
   background:
     radial-gradient(circle at top right, rgba(17, 17, 17, 0.03), transparent 24%),
@@ -303,10 +303,10 @@ body::before {
 
 .tech-cover-story h3 {
   max-width: 12ch;
-  font-family: "Source Serif 4", Georgia, serif;
+  font-family: "Newsreader", "Noto Serif SC", Georgia, serif;
   font-size: clamp(24px, 3vw, 34px);
   line-height: 0.95;
-  letter-spacing: -0.04em;
+  letter-spacing: 0;
 }
 
 .tech-cover-deck {
@@ -474,21 +474,22 @@ body::before {
 }
 
 .cover-body h1 {
-  font-family: "Source Serif 4", Georgia, serif;
+  font-family: "Newsreader", "Noto Serif SC", Georgia, serif;
   font-size: clamp(52px, 8vw, 96px);
   line-height: 0.86;
   font-weight: 700;
-  letter-spacing: -0.05em;
+  letter-spacing: 0;
 }
 
 .cover-quote {
   max-width: 28ch;
   margin: 12px auto 0;
-  font-family: "Source Serif 4", Georgia, serif;
+  font-family: "Newsreader", "Noto Serif SC", Georgia, serif;
   font-size: clamp(20px, 2.35vw, 34px);
   line-height: 1.08;
   font-weight: 400;
   color: #26231f;
+  letter-spacing: 0;
 }
 
 .cover-source {
@@ -516,6 +517,7 @@ input,
 textarea,
 select {
   font: inherit;
+  font-family: "Inter", "Noto Sans SC", system-ui, sans-serif;
 }
 
 button {
@@ -605,10 +607,10 @@ button:hover {
 
 .auth-dialog h2 {
   margin: 10px 0 10px;
-  font-family: "Source Serif 4", Georgia, serif;
+  font-family: "Newsreader", "Noto Serif SC", Georgia, serif;
   font-size: 40px;
   line-height: 0.95;
-  letter-spacing: -0.04em;
+  letter-spacing: 0;
 }
 
 .auth-copy,
@@ -839,11 +841,11 @@ button:hover {
 
 .chat-intro h2 {
   margin: 12px 0 0;
-  font-family: "Libre Franklin", "Noto Sans SC", sans-serif;
+  font-family: "Newsreader", "Noto Serif SC", Georgia, serif;
   font-size: clamp(34px, 4.8vw, 56px);
   line-height: 1.02;
   font-weight: 600;
-  letter-spacing: -0.04em;
+  letter-spacing: 0;
 }
 
 .chat-intro-copy {
@@ -913,7 +915,7 @@ button:hover {
 .sample-subtitle,
 #verdict-summary,
 .media-copy p {
-  font-family: "Libre Franklin", "Noto Sans SC", sans-serif;
+  font-family: "Inter", "Noto Sans SC", system-ui, sans-serif;
 }
 
 .field span {
@@ -1064,7 +1066,7 @@ textarea.input-error {
 }
 
 .sample-title {
-  font-family: "Libre Franklin", "Noto Sans SC", sans-serif;
+  font-family: "Inter", "Noto Sans SC", system-ui, sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: var(--ink);
@@ -1168,10 +1170,11 @@ textarea.input-error {
 
 .result-copy h2 {
   margin-top: 12px;
-  font-family: "Source Serif 4", Georgia, serif;
+  font-family: "Newsreader", "Noto Serif SC", Georgia, serif;
   font-size: clamp(34px, 4vw, 52px);
   line-height: 0.98;
   font-weight: 700;
+  letter-spacing: 0;
 }
 
 .page-shell.app-active .result-copy h2 {
@@ -1317,10 +1320,11 @@ textarea.input-error {
 
 .media-copy h4 {
   margin: 8px 0 10px;
-  font-family: "Source Serif 4", Georgia, serif;
+  font-family: "Newsreader", "Noto Serif SC", Georgia, serif;
   font-size: 28px;
   line-height: 1.04;
   font-weight: 600;
+  letter-spacing: 0;
 }
 
 .page-shell.app-active .media-copy h4 {
@@ -1390,10 +1394,11 @@ textarea.input-error {
 .evidence-item strong {
   display: block;
   margin-bottom: 6px;
-  font-family: "Source Serif 4", Georgia, serif;
+  font-family: "Newsreader", "Noto Serif SC", Georgia, serif;
   font-size: 24px;
   font-weight: 600;
   line-height: 1.04;
+  letter-spacing: 0;
 }
 
 .page-shell.app-active .evidence-item strong {
@@ -1726,11 +1731,11 @@ textarea.input-error {
 
 .chat-main-head h2 {
   margin: 8px 0 0;
-  font-family: "Libre Franklin", "Noto Sans SC", sans-serif;
+  font-family: "Inter", "Noto Sans SC", system-ui, sans-serif;
   font-size: 22px;
   line-height: 1.1;
   font-weight: 600;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
 }
 
 .chat-scroll {
@@ -1759,11 +1764,11 @@ textarea.input-error {
 
 .chat-intro h2 {
   margin: 14px 0 0;
-  font-family: "Libre Franklin", "Noto Sans SC", sans-serif;
+  font-family: "Newsreader", "Noto Serif SC", Georgia, serif;
   font-size: clamp(42px, 5vw, 64px);
   line-height: 1.02;
   font-weight: 600;
-  letter-spacing: -0.05em;
+  letter-spacing: 0;
 }
 
 .chat-intro-copy {
@@ -1954,9 +1959,10 @@ textarea.input-error {
 
 .workflow-copy h3 {
   margin: 6px 0 8px;
-  font-family: "Source Serif 4", Georgia, serif;
+  font-family: "Newsreader", "Noto Serif SC", Georgia, serif;
   font-size: clamp(24px, 3vw, 34px);
   line-height: 1.05;
+  letter-spacing: 0;
 }
 
 .workflow-copy p {
@@ -2473,15 +2479,22 @@ body.app-mode {
 .chat-input-shell .actions .secondary-button {
   display: inline-grid;
   place-items: center;
-  min-width: 38px;
-  width: 38px;
-  min-height: 38px;
-  height: 38px;
+  min-width: 42px;
+  width: 42px;
+  min-height: 42px;
+  height: 42px;
   padding: 0;
   border-radius: 50%;
   white-space: nowrap;
-  font-size: 21px;
+  font-size: 23px;
   line-height: 1;
+}
+
+.send-icon {
+  display: block;
+  width: 21px;
+  height: 21px;
+  transform: translateY(-0.5px);
 }
 
 .chat-input-shell .actions {
