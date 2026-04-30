@@ -309,16 +309,48 @@ function hideAuthError() {
   elements.authError.classList.add("is-hidden");
 }
 
+const guestGreetings = [
+  "Stay critical.",
+  "Verify first.",
+  "Truth matters.",
+  "Think twice.",
+];
+
+function pickGuestGreeting() {
+  return guestGreetings[Math.floor(Math.random() * guestGreetings.length)];
+}
+
+function swapGreetingText(next) {
+  const el = elements.chatGreeting;
+  if (!el || el.textContent === next) {
+    if (el) el.textContent = next;
+    return;
+  }
+
+  const dur = parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue("--text-swap-dur")
+  ) || 200;
+
+  el.classList.add("is-exit");
+  window.setTimeout(() => {
+    el.textContent = next;
+    el.classList.remove("is-exit");
+    el.classList.add("is-enter-start");
+    void el.offsetHeight;
+    el.classList.remove("is-enter-start");
+  }, dur);
+}
+
 function updateAccountUi(session) {
   if (!session?.name) {
     elements.accountPanel?.classList.add("is-hidden");
     elements.accountName.textContent = "Guest";
-    elements.chatGreeting.textContent = "Hello, Truer";
+    swapGreetingText(pickGuestGreeting());
     return;
   }
 
   elements.accountName.textContent = session.name;
-  elements.chatGreeting.textContent = `Hello, ${session.name}`;
+  swapGreetingText(`Hello, ${session.name}`);
   elements.accountPanel?.classList.remove("is-hidden");
 }
 
@@ -385,7 +417,7 @@ function normalize(text) {
 }
 
 function classifyAuthenticity(score) {
-  if (score < 20) {
+  if (score < 40) {
     return {
       status: "false",
       verdictLabel: "Fake",
@@ -393,7 +425,7 @@ function classifyAuthenticity(score) {
     };
   }
 
-  if (score > 80) {
+  if (score > 70) {
     return {
       status: "true",
       verdictLabel: "True",
@@ -431,25 +463,17 @@ function showApp() {
   if (isInitialLoad || isPageTransitioning) {
     document.body.classList.add("app-mode");
     elements.pageShell.classList.add("app-active");
-    elements.landing.classList.add("is-hidden");
-    elements.workspace.classList.remove("is-hidden");
+    elements.pageShell.setAttribute("data-page", "2");
     window.scrollTo({ top: 0, behavior: "auto" });
     return;
   }
 
   isPageTransitioning = true;
-  elements.workspace.classList.remove("is-hidden");
-  elements.workspace.classList.add("page-enter-from-right");
-  elements.landing.classList.add("page-exit-left");
+  document.body.classList.add("app-mode");
+  elements.pageShell.classList.add("app-active");
+  elements.pageShell.setAttribute("data-page", "2");
 
-  onAnimationEnd(elements.landing, () => {
-    elements.landing.classList.add("is-hidden");
-    elements.landing.classList.remove("page-exit-left");
-
-    document.body.classList.add("app-mode");
-    elements.pageShell.classList.add("app-active");
-
-    elements.workspace.classList.remove("page-enter-from-right");
+  onTransitionEnd(elements.workspace, () => {
     window.scrollTo({ top: 0, behavior: "auto" });
     isPageTransitioning = false;
   });
@@ -461,36 +485,24 @@ function showLanding() {
 
   document.body.classList.remove("app-mode");
   elements.pageShell.classList.remove("app-active");
+  elements.pageShell.setAttribute("data-page", "1");
 
-  elements.landing.classList.remove("is-hidden");
-  elements.landing.classList.add("page-enter-from-left");
-  elements.workspace.classList.add("page-exit-right");
-
-  onAnimationEnd(elements.workspace, () => {
-    elements.workspace.classList.add("is-hidden");
-    elements.workspace.classList.remove("page-exit-right");
-    elements.landing.classList.remove("page-enter-from-left");
+  onTransitionEnd(elements.landing, () => {
     window.scrollTo({ top: 0, behavior: "auto" });
     isPageTransitioning = false;
   });
 }
 
 function revealChatHome() {
-  elements.chatHome.classList.remove("is-hidden");
-  elements.chatHome.classList.add("panel-enter");
-  onAnimationEnd(elements.chatHome, () => {
-    elements.chatHome.classList.remove("panel-enter");
-  });
+  elements.chatHome.setAttribute("data-open", "true");
 }
 
 function showHomeState() {
-  const resultVisible = !elements.resultPanel.classList.contains("is-hidden");
+  const resultVisible = elements.resultPanel.getAttribute("data-open") === "true";
 
   if (resultVisible) {
-    elements.resultPanel.classList.add("panel-exit");
-    onAnimationEnd(elements.resultPanel, () => {
-      elements.resultPanel.classList.add("is-hidden");
-      elements.resultPanel.classList.remove("panel-exit");
+    elements.resultPanel.setAttribute("data-open", "false");
+    onTransitionEnd(elements.resultPanel, () => {
       revealChatHome();
     });
   } else {
@@ -499,11 +511,7 @@ function showHomeState() {
 }
 
 function revealResultPanel() {
-  elements.resultPanel.classList.remove("is-hidden");
-  elements.resultPanel.classList.add("panel-enter");
-  onAnimationEnd(elements.resultPanel, () => {
-    elements.resultPanel.classList.remove("panel-enter");
-  });
+  elements.resultPanel.setAttribute("data-open", "true");
   window.requestAnimationFrame(() => {
     elements.chatScroll.scrollTo({
       top: elements.chatScroll.scrollHeight,
@@ -513,13 +521,11 @@ function revealResultPanel() {
 }
 
 function revealConversation() {
-  const homeVisible = !elements.chatHome.classList.contains("is-hidden");
+  const homeVisible = elements.chatHome.getAttribute("data-open") === "true";
 
   if (homeVisible) {
-    elements.chatHome.classList.add("panel-exit");
-    onAnimationEnd(elements.chatHome, () => {
-      elements.chatHome.classList.add("is-hidden");
-      elements.chatHome.classList.remove("panel-exit");
+    elements.chatHome.setAttribute("data-open", "false");
+    onTransitionEnd(elements.chatHome, () => {
       revealResultPanel();
     });
   } else {
@@ -574,9 +580,9 @@ function renderCases() {
   elements.caseList.innerHTML = cases
     .map(
       (item, index) => `
-        <button class="sample-item" data-case-id="${item.id}" style="--stagger-index: ${index}">
+        <button class="sample-item t-resize" data-case-id="${item.id}" style="--stagger-index: ${index}">
           <span class="sample-title">${escapeHtml(item.title)}</span>
-          <span class="sample-subtitle">${escapeHtml(item.verdictLabel)} · ${escapeHtml(item.speaker)}</span>
+          <span class="sample-subtitle">${escapeHtml(item.speaker)}</span>
         </button>
       `
     )
@@ -610,6 +616,25 @@ function evidenceMarkup(evidence = []) {
     .join("");
 }
 
+function renderAuthenticityDigits(label) {
+  const chars = String(label || "").split("");
+  return `
+    <span class="t-digit-group is-animating">
+      ${chars
+        .map((ch, i) => {
+          const stagger = i === chars.length - 2 ? ' data-stagger="1"' : i === chars.length - 1 ? ' data-stagger="2"' : "";
+          return `<span class="t-digit"${stagger}>${escapeHtml(ch)}</span>`;
+        })
+        .join("")}
+    </span>
+  `;
+}
+
+function stripProcessInfo(text) {
+  if (!text || /\bCerul\b/i.test(text)) return "";
+  return text;
+}
+
 function workflowMarkup(data) {
   const media = data.mediaEvidence || {
     label: "Video Evidence",
@@ -628,20 +653,20 @@ function workflowMarkup(data) {
 
   return `
     <div class="verification-workflow">
-      <article class="workflow-step">
+      <article class="workflow-step" style="--stagger-index: 0">
         <span class="workflow-index">1</span>
         <div class="workflow-copy">
           <p class="section-label">Verdict</p>
           <h3>${escapeHtml(data.verdictTitle)}</h3>
-          <p>${escapeHtml(data.summary)}</p>
+          ${stripProcessInfo(data.summary) ? `<p>${escapeHtml(stripProcessInfo(data.summary))}</p>` : ""}
           <div class="result-meta-row">
             <span class="status-pill ${escapeHtml(data.status)}">${escapeHtml(data.verdictLabel)}</span>
-            <span class="confidence-pill">Authenticity ${escapeHtml(data.authenticityLabel)}</span>
+            <span class="confidence-pill">Authenticity ${renderAuthenticityDigits(data.authenticityLabel)}</span>
           </div>
         </div>
       </article>
 
-      <article class="workflow-step">
+      <article class="workflow-step" style="--stagger-index: 1">
         <span class="workflow-index">2</span>
         <div class="workflow-copy">
           <p class="section-label">Source Video</p>
@@ -651,7 +676,7 @@ function workflowMarkup(data) {
         </div>
       </article>
 
-      <article class="workflow-step">
+      <article class="workflow-step" style="--stagger-index: 2">
         <span class="workflow-index">3</span>
         <div class="workflow-copy">
           <p class="section-label">Matched Timestamp</p>
@@ -661,7 +686,7 @@ function workflowMarkup(data) {
         </div>
       </article>
 
-      <article class="workflow-step workflow-frame-step">
+      <article class="workflow-step workflow-frame-step" style="--stagger-index: 3">
         <span class="workflow-index">4</span>
         <div class="workflow-copy">
           <p class="section-label">Key Frame Screenshot</p>
@@ -670,7 +695,7 @@ function workflowMarkup(data) {
             <span class="keyframe-badge">${escapeHtml(media.frameTitle)}</span>
             <span class="preview-time">${escapeHtml(media.frameTimestamp)}</span>
           </div>
-          <p>${escapeHtml(media.frameNote)}</p>
+          ${stripProcessInfo(media.frameNote) ? `<p>${escapeHtml(stripProcessInfo(media.frameNote))}</p>` : ""}
         </div>
       </article>
     </div>
@@ -714,7 +739,7 @@ function turnMarkup(turn) {
           <div class="result-copy">
             <div class="result-meta-row">
               <span class="status-pill ${escapeHtml(data.status)}">${escapeHtml(data.verdictLabel)}</span>
-              <span class="confidence-pill">Authenticity ${escapeHtml(data.authenticityLabel)}</span>
+              <span class="confidence-pill">Authenticity ${renderAuthenticityDigits(data.authenticityLabel)}</span>
             </div>
             <h2>${escapeHtml(data.verdictTitle)}</h2>
             <p class="verdict-summary">${escapeHtml(data.summary)}</p>
@@ -1028,12 +1053,14 @@ function startNewChat() {
   hideInputHint();
   renderHistory();
 
-  const resultVisible = !elements.resultPanel.classList.contains("is-hidden");
+  if (!loadSession()?.name) {
+    swapGreetingText(pickGuestGreeting());
+  }
+
+  const resultVisible = elements.resultPanel.getAttribute("data-open") === "true";
   if (resultVisible) {
-    elements.resultPanel.classList.add("panel-exit");
-    onAnimationEnd(elements.resultPanel, () => {
-      elements.resultPanel.classList.add("is-hidden");
-      elements.resultPanel.classList.remove("panel-exit");
+    elements.resultPanel.setAttribute("data-open", "false");
+    onTransitionEnd(elements.resultPanel, () => {
       elements.resultPanel.innerHTML = "";
       revealChatHome();
     });

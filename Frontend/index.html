@@ -14,11 +14,11 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,600;6..72,700&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=7" />
+    <link rel="stylesheet" href="./styles.css?v=8" />
   </head>
   <body>
-    <div class="page-shell">
-      <section class="cover" id="landing-screen">
+    <div class="page-shell t-page-slide" data-page="1">
+      <section class="cover t-page" data-page-id="1" id="landing-screen">
         <div class="cover-nav">
           <span class="brand-mark">Truth Hermes</span>
         </div>
@@ -60,9 +60,17 @@
             </button>
           </div>
         </div>
+
+        <footer class="cover-credit">
+          <span>Powered by</span>
+          <a href="https://cerul.ai/" target="_blank" rel="noopener noreferrer" class="credit-link">
+            <img src="./assets/cerul-logo.svg" alt="Cerul" class="credit-logo" width="24" height="24" />
+            <span class="credit-name">Cerul</span>
+          </a>
+        </footer>
       </section>
 
-      <main class="workspace is-hidden" id="app-workspace">
+      <main class="workspace t-page" data-page-id="2" id="app-workspace">
         <aside class="chat-sidebar">
           <div class="sidebar-head">
             <span class="brand-mark">Truth Hermes</span>
@@ -91,10 +99,9 @@
           </header>
 
           <div class="chat-scroll" id="chat-scroll">
-            <section class="chat-home" id="chat-home">
+            <section class="chat-home t-panel-slide" data-open="true" id="chat-home">
               <div class="chat-intro">
-                <p class="section-label">Verification Console</p>
-                <h2 id="chat-greeting">Hello, Truer</h2>
+                <h2 id="chat-greeting" class="t-text-swap">Hello, Truer</h2>
                 <p class="chat-intro-copy">
                   Truth Hermes returns a verdict, identifies the source video, points to the exact timestamp, and shows a key frame from the evidence window.
                 </p>
@@ -108,7 +115,7 @@
               </div>
             </section>
 
-            <section class="result-panel is-hidden" id="result-panel"></section>
+            <section class="result-panel t-panel-slide" data-open="false" id="result-panel"></section>
           </div>
 
           <section class="chat-composer-area">
@@ -152,7 +159,7 @@
 
     <div class="auth-modal" id="auth-modal" aria-hidden="true">
       <div class="auth-backdrop" id="auth-backdrop"></div>
-      <section class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <section class="auth-dialog t-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
         <button class="auth-close" id="auth-close" aria-label="Close sign up dialog">&times;</button>
         <p class="section-label">Truth Hermes access</p>
         <h2 id="auth-title">Create your account</h2>
@@ -203,6 +210,6 @@
       </section>
     </div>
 
-    <script type="module" src="./main.js?v=7"></script>
+    <script type="module" src="./main.js?v=8"></script>
   </body>
 </html>
