@@ -17,6 +17,15 @@
   --radius-lg: 18px;
   --radius-md: 12px;
   --conversation-width: 960px;
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --page-slide-dur: 200ms;
+  --page-slide-distance: 8px;
+  --page-blur: 3px;
+  --panel-open-dur: 400ms;
+  --panel-close-dur: 350ms;
+  --modal-open-dur: 250ms;
+  --modal-close-dur: 150ms;
+  --stagger-base: 60ms;
 }
 
 * {
@@ -59,6 +68,7 @@ body::before {
 }
 
 .page-shell {
+  position: relative;
   width: min(1320px, calc(100vw - 32px));
   margin: 0 auto;
   min-height: 100vh;
@@ -103,10 +113,39 @@ body::before {
   justify-content: flex-start;
 }
 
+.cover,
+.workspace {
+  will-change: opacity, transform, filter;
+}
+
 .cover.is-hidden,
-.workspace.is-hidden,
+.workspace.is-hidden {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}
+
 .chat-input-shell.is-hidden {
   display: none;
+}
+
+/* Page slide animations */
+.cover.page-exit-left {
+  animation: pageSlideOutLeft var(--page-slide-dur) var(--ease-out-expo) forwards;
+}
+
+.workspace.page-enter-from-right {
+  animation: pageSlideInFromRight var(--page-slide-dur) var(--ease-out-expo) forwards;
+}
+
+.workspace.page-exit-right {
+  animation: pageSlideOutRight var(--page-slide-dur) var(--ease-out-expo) forwards;
+}
+
+.cover.page-enter-from-left {
+  animation: pageSlideInFromLeft var(--page-slide-dur) var(--ease-out-expo) forwards;
 }
 
 .cover-nav,
@@ -566,10 +605,13 @@ button:hover {
   position: fixed;
   inset: 0;
   z-index: 40;
+  visibility: hidden;
+  pointer-events: none;
 }
 
-.auth-modal.is-hidden {
-  display: none;
+.auth-modal.is-open {
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .auth-backdrop {
@@ -577,6 +619,17 @@ button:hover {
   inset: 0;
   background: rgba(17, 17, 17, 0.42);
   backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity var(--modal-open-dur) var(--ease-out-expo);
+}
+
+.auth-modal.is-open .auth-backdrop {
+  opacity: 1;
+}
+
+.auth-modal.is-closing .auth-backdrop {
+  opacity: 0;
+  transition-duration: var(--modal-close-dur);
 }
 
 .auth-dialog {
@@ -589,6 +642,22 @@ button:hover {
   border: 1px solid rgba(17, 17, 17, 0.12);
   background: rgba(255, 252, 246, 0.98);
   box-shadow: 0 22px 60px rgba(17, 17, 17, 0.18);
+  opacity: 0;
+  transform: scale(0.96);
+  transition:
+    opacity var(--modal-open-dur) var(--ease-out-expo),
+    transform var(--modal-open-dur) var(--ease-out-expo);
+}
+
+.auth-modal.is-open .auth-dialog {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.auth-modal.is-closing .auth-dialog {
+  opacity: 0;
+  transform: scale(0.96);
+  transition-duration: var(--modal-close-dur);
 }
 
 .auth-close {
@@ -789,6 +858,84 @@ button:hover {
   }
 }
 
+@keyframes pageSlideOutLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--page-slide-distance)));
+    filter: blur(var(--page-blur));
+  }
+}
+
+@keyframes pageSlideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(var(--page-slide-distance));
+    filter: blur(var(--page-blur));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes pageSlideOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(var(--page-slide-distance));
+    filter: blur(var(--page-blur));
+  }
+}
+
+@keyframes pageSlideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--page-slide-distance)));
+    filter: blur(var(--page-blur));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes panelRevealIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes panelRevealOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+    filter: blur(2px);
+  }
+}
+
 .workspace {
   display: grid;
   grid-template-columns: 1fr;
@@ -821,8 +968,28 @@ button:hover {
   margin: 0 auto;
 }
 
-.result-panel.is-hidden {
-  display: none;
+.chat-home,
+.result-panel {
+  will-change: opacity, transform, filter;
+}
+
+.result-panel.is-hidden,
+.chat-home.is-hidden {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+}
+
+.chat-home.panel-enter,
+.result-panel.panel-enter {
+  animation: panelRevealIn var(--panel-open-dur) var(--ease-out-expo) forwards;
+}
+
+.chat-home.panel-exit,
+.result-panel.panel-exit {
+  animation: panelRevealOut var(--panel-close-dur) var(--ease-out-expo) forwards;
 }
 
 .panel-block,
@@ -1448,11 +1615,15 @@ textarea.input-error {
 .cover,
 .panel-block,
 .result-hero,
-.section-card,
+.section-card {
+  animation: fadeUp 420ms ease both;
+}
+
 .sample-item,
 .media-card,
 .evidence-item {
   animation: fadeUp 420ms ease both;
+  animation-delay: calc(var(--stagger-index, 0) * var(--stagger-base));
 }
 
 @media (max-width: 1080px) {
@@ -1750,10 +1921,6 @@ textarea.input-error {
   max-width: 860px;
   margin: 0 auto;
   padding: 48px 0 32px;
-}
-
-.chat-home.is-hidden {
-  display: none;
 }
 
 .chat-intro {
@@ -2328,6 +2495,7 @@ body.app-mode {
 }
 
 .chat-scroll {
+  position: relative;
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
@@ -2580,5 +2748,25 @@ body.app-mode {
 
   .chat-input-shell .actions .primary-button {
     width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .cover,
+  .workspace,
+  .chat-home,
+  .result-panel,
+  .auth-dialog,
+  .auth-backdrop {
+    will-change: auto;
+    filter: none !important;
   }
 }

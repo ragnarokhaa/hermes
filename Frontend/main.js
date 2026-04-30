@@ -150,6 +150,8 @@ let activeConversationId = null;
 let requestSequence = 0;
 let isRequestInFlight = false;
 let authMode = "register";
+let isPageTransitioning = false;
+let isInitialLoad = true;
 
 const AUTH_USERS_KEY = "truth-hermes-users";
 const AUTH_SESSION_KEY = "truth-hermes-session";
@@ -192,6 +194,48 @@ const elements = {
   accountName: document.querySelector("#account-name"),
   logoutButton: document.querySelector("#logout-button"),
 };
+
+function onAnimationEnd(element, callback) {
+  let fired = false;
+  const fallback = setTimeout(() => {
+    if (!fired) {
+      fired = true;
+      callback();
+    }
+  }, 500);
+
+  function handler(event) {
+    if (event.target !== element) return;
+    element.removeEventListener("animationend", handler);
+    clearTimeout(fallback);
+    if (!fired) {
+      fired = true;
+      callback();
+    }
+  }
+  element.addEventListener("animationend", handler);
+}
+
+function onTransitionEnd(element, callback) {
+  let fired = false;
+  const fallback = setTimeout(() => {
+    if (!fired) {
+      fired = true;
+      callback();
+    }
+  }, 400);
+
+  function handler(event) {
+    if (event.target !== element) return;
+    element.removeEventListener("transitionend", handler);
+    clearTimeout(fallback);
+    if (!fired) {
+      fired = true;
+      callback();
+    }
+  }
+  element.addEventListener("transitionend", handler);
+}
 
 function sanitizeComposerUi() {
   document.querySelectorAll(".composer-tools, .tool-button").forEach((node) => {
@@ -306,18 +350,25 @@ function setAuthMode(mode) {
 function openAuthModal(mode = "register") {
   setAuthMode(mode);
   resetAuthForm();
-  elements.authModal.classList.remove("is-hidden");
+  elements.authModal.classList.remove("is-closing");
+  elements.authModal.classList.add("is-open");
   elements.authModal.setAttribute("aria-hidden", "false");
   document.body.classList.add("modal-open");
   window.setTimeout(() => {
     (authMode === "login" ? elements.authIdentifier : elements.authName)?.focus();
-  }, 0);
+  }, 50);
 }
 
 function closeAuthModal() {
-  elements.authModal.classList.add("is-hidden");
+  elements.authModal.classList.add("is-closing");
+  elements.authModal.classList.remove("is-open");
   elements.authModal.setAttribute("aria-hidden", "true");
   document.body.classList.remove("modal-open");
+
+  const dialog = elements.authModal.querySelector(".auth-dialog");
+  onTransitionEnd(dialog, () => {
+    elements.authModal.classList.remove("is-closing");
+  });
 }
 
 function escapeHtml(value) {
@@ -377,35 +428,103 @@ function getActiveConversation() {
 }
 
 function showApp() {
-  document.body.classList.add("app-mode");
-  elements.pageShell.classList.add("app-active");
-  elements.landing.classList.add("is-hidden");
+  if (isInitialLoad || isPageTransitioning) {
+    document.body.classList.add("app-mode");
+    elements.pageShell.classList.add("app-active");
+    elements.landing.classList.add("is-hidden");
+    elements.workspace.classList.remove("is-hidden");
+    window.scrollTo({ top: 0, behavior: "auto" });
+    return;
+  }
+
+  isPageTransitioning = true;
   elements.workspace.classList.remove("is-hidden");
-  window.scrollTo({ top: 0, behavior: "auto" });
+  elements.workspace.classList.add("page-enter-from-right");
+  elements.landing.classList.add("page-exit-left");
+
+  onAnimationEnd(elements.landing, () => {
+    elements.landing.classList.add("is-hidden");
+    elements.landing.classList.remove("page-exit-left");
+
+    document.body.classList.add("app-mode");
+    elements.pageShell.classList.add("app-active");
+
+    elements.workspace.classList.remove("page-enter-from-right");
+    window.scrollTo({ top: 0, behavior: "auto" });
+    isPageTransitioning = false;
+  });
 }
 
 function showLanding() {
+  if (isPageTransitioning) return;
+  isPageTransitioning = true;
+
   document.body.classList.remove("app-mode");
   elements.pageShell.classList.remove("app-active");
-  elements.workspace.classList.add("is-hidden");
+
   elements.landing.classList.remove("is-hidden");
-  window.scrollTo({ top: 0, behavior: "auto" });
+  elements.landing.classList.add("page-enter-from-left");
+  elements.workspace.classList.add("page-exit-right");
+
+  onAnimationEnd(elements.workspace, () => {
+    elements.workspace.classList.add("is-hidden");
+    elements.workspace.classList.remove("page-exit-right");
+    elements.landing.classList.remove("page-enter-from-left");
+    window.scrollTo({ top: 0, behavior: "auto" });
+    isPageTransitioning = false;
+  });
+}
+
+function revealChatHome() {
+  elements.chatHome.classList.remove("is-hidden");
+  elements.chatHome.classList.add("panel-enter");
+  onAnimationEnd(elements.chatHome, () => {
+    elements.chatHome.classList.remove("panel-enter");
+  });
 }
 
 function showHomeState() {
-  elements.chatHome.classList.remove("is-hidden");
-  elements.resultPanel.classList.add("is-hidden");
+  const resultVisible = !elements.resultPanel.classList.contains("is-hidden");
+
+  if (resultVisible) {
+    elements.resultPanel.classList.add("panel-exit");
+    onAnimationEnd(elements.resultPanel, () => {
+      elements.resultPanel.classList.add("is-hidden");
+      elements.resultPanel.classList.remove("panel-exit");
+      revealChatHome();
+    });
+  } else {
+    revealChatHome();
+  }
 }
 
-function revealConversation() {
-  elements.chatHome.classList.add("is-hidden");
+function revealResultPanel() {
   elements.resultPanel.classList.remove("is-hidden");
+  elements.resultPanel.classList.add("panel-enter");
+  onAnimationEnd(elements.resultPanel, () => {
+    elements.resultPanel.classList.remove("panel-enter");
+  });
   window.requestAnimationFrame(() => {
     elements.chatScroll.scrollTo({
       top: elements.chatScroll.scrollHeight,
       behavior: "smooth",
     });
   });
+}
+
+function revealConversation() {
+  const homeVisible = !elements.chatHome.classList.contains("is-hidden");
+
+  if (homeVisible) {
+    elements.chatHome.classList.add("panel-exit");
+    onAnimationEnd(elements.chatHome, () => {
+      elements.chatHome.classList.add("is-hidden");
+      elements.chatHome.classList.remove("panel-exit");
+      revealResultPanel();
+    });
+  } else {
+    revealResultPanel();
+  }
 }
 
 function showInputHint(message) {
@@ -454,8 +573,8 @@ function renderHistory() {
 function renderCases() {
   elements.caseList.innerHTML = cases
     .map(
-      (item) => `
-        <button class="sample-item" data-case-id="${item.id}">
+      (item, index) => `
+        <button class="sample-item" data-case-id="${item.id}" style="--stagger-index: ${index}">
           <span class="sample-title">${escapeHtml(item.title)}</span>
           <span class="sample-subtitle">${escapeHtml(item.verdictLabel)} · ${escapeHtml(item.speaker)}</span>
         </button>
@@ -467,8 +586,8 @@ function renderCases() {
 function evidenceMarkup(evidence = []) {
   return evidence
     .map(
-      (item) => `
-        <article class="evidence-item">
+      (item, index) => `
+        <article class="evidence-item" style="--stagger-index: ${index}">
           <div class="evidence-top">
             <span>${escapeHtml(item.type)}</span>
             <span>score ${escapeHtml(item.score)}</span>
@@ -906,10 +1025,22 @@ function startNewChat() {
   resizeComposer();
   elements.speakerInput.value = "";
   elements.contentType.value = "quote";
-  elements.resultPanel.innerHTML = "";
   hideInputHint();
   renderHistory();
-  showHomeState();
+
+  const resultVisible = !elements.resultPanel.classList.contains("is-hidden");
+  if (resultVisible) {
+    elements.resultPanel.classList.add("panel-exit");
+    onAnimationEnd(elements.resultPanel, () => {
+      elements.resultPanel.classList.add("is-hidden");
+      elements.resultPanel.classList.remove("panel-exit");
+      elements.resultPanel.innerHTML = "";
+      revealChatHome();
+    });
+  } else {
+    elements.resultPanel.innerHTML = "";
+    revealChatHome();
+  }
 }
 
 elements.tryGuest?.addEventListener("click", showApp);
@@ -972,7 +1103,7 @@ elements.historyList?.addEventListener("click", (event) => {
 });
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && !elements.authModal?.classList.contains("is-hidden")) {
+  if (event.key === "Escape" && elements.authModal?.classList.contains("is-open")) {
     closeAuthModal();
   }
 });
@@ -989,3 +1120,7 @@ if (session?.name) {
 } else {
   updateAccountUi(null);
 }
+
+requestAnimationFrame(() => {
+  isInitialLoad = false;
+});
