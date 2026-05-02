@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
@@ -11,14 +11,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,600;6..72,700&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=19" />
   </head>
   <body>
-    <div class="page-shell">
-      <section class="cover" id="landing-screen">
+    <div class="page-shell t-page-slide" data-page="1">
+      <section class="cover t-page" data-page-id="1" id="landing-screen">
         <div class="cover-nav">
           <span class="brand-mark">Truth Hermes</span>
         </div>
@@ -29,12 +29,12 @@
               <div class="tv-antenna"></div>
               <div class="tv-shell">
                 <div class="tv-screen">
-                  <div class="tv-static"></div>
                   <img
                     class="tv-gif"
                     src="./assets/nixon-footage.gif"
-                    alt="Black and white Richard Nixon archival footage"
+                    alt="Archived news footage playing on a television screen"
                   />
+                  <div class="tv-static"></div>
                   <span class="tv-kicker">Nixon archive</span>
                   <span class="tv-caption">Verified historical campaign footage</span>
                 </div>
@@ -60,13 +60,28 @@
             </button>
           </div>
         </div>
+
+        <footer class="cover-credit">
+          <span>Sponsored by</span>
+          <a href="https://cerul.ai/" target="_blank" rel="noopener noreferrer" class="credit-link">
+            <img src="./assets/cerul-logo.svg" alt="Cerul" class="credit-logo" width="24" height="24" />
+            <span class="credit-name">Cerul</span>
+          </a>
+        </footer>
       </section>
 
-      <main class="workspace is-hidden" id="app-workspace">
+      <main class="workspace t-page" data-page-id="2" id="app-workspace">
         <aside class="chat-sidebar">
           <div class="sidebar-head">
             <span class="brand-mark">Truth Hermes</span>
             <button class="new-chat-button" id="new-chat">New verification</button>
+            <div class="account-panel is-hidden" id="account-panel">
+              <div class="account-copy">
+                <span class="account-label">Signed in as</span>
+                <strong id="account-name">Guest</strong>
+              </div>
+              <button class="logout-button" id="logout-button">Log out</button>
+            </div>
           </div>
 
           <div class="sidebar-section">
@@ -84,10 +99,9 @@
           </header>
 
           <div class="chat-scroll" id="chat-scroll">
-            <section class="chat-home" id="chat-home">
+            <section class="chat-home t-panel-slide" data-open="true" id="chat-home">
               <div class="chat-intro">
-                <p class="section-label">Verification Console</p>
-                <h2>Hello, Truer</h2>
+                <h2 id="chat-greeting" class="t-text-swap">Hello, Truer</h2>
                 <p class="chat-intro-copy">
                   Truth Hermes returns a verdict, identifies the source video, points to the exact timestamp, and shows a key frame from the evidence window.
                 </p>
@@ -101,36 +115,39 @@
               </div>
             </section>
 
-            <section class="result-panel is-hidden" id="result-panel"></section>
+            <section class="result-panel t-panel-slide" data-open="false" id="result-panel"></section>
           </div>
 
           <section class="chat-composer-area">
             <section class="chat-input-shell panel-block composer">
-              <label class="field composer-field">
-                <span>Claim to verify</span>
-                <input
-                  id="quote-input"
-                  type="text"
-                  placeholder="Enter a quote, claim, or video description..."
-                />
-              </label>
-              <p class="input-hint is-hidden" id="input-hint">Please enter a quote, claim, or video description first.</p>
-
-              <div class="composer-foot">
-                <input id="speaker-input" type="hidden" />
-                <select id="content-type" aria-label="Content Type">
-                  <option value="quote">Quote</option>
-                  <option value="speech">Speech</option>
-                  <option value="video">Video Clip</option>
-                </select>
-                <div class="composer-tools" aria-hidden="true">
-                  <button class="tool-button" type="button" tabindex="-1">+</button>
-                  <button class="tool-button" type="button" tabindex="-1">◎</button>
-                </div>
+              <div class="composer-row">
+                <label class="field composer-field">
+                  <span>Claim to verify</span>
+                  <textarea
+                    id="quote-input"
+                    rows="1"
+                    placeholder="Enter a quote, claim, or video description..."
+                  ></textarea>
+                </label>
                 <div class="actions">
-                  <button class="primary-button" id="start-demo" aria-label="Verify now">↑</button>
+                  <button class="primary-button" id="start-demo" aria-label="Verify now">
+                    <svg class="send-icon" aria-hidden="true" viewBox="0 0 24 24">
+                      <path
+                        d="M12 4.2 19.1 11.3 16.9 13.5 13.6 10.2V20H10.4V10.2L7.1 13.5 4.9 11.3 12 4.2Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </button>
                 </div>
               </div>
+              <p class="input-hint is-hidden" id="input-hint">Please enter a quote, claim, or video description first.</p>
+
+              <input id="speaker-input" type="hidden" />
+              <select id="content-type" aria-label="Content Type">
+                <option value="quote">Quote</option>
+                <option value="speech">Speech</option>
+                <option value="video">Video Clip</option>
+              </select>
             </section>
             <p class="composer-disclaimer">
               Truth Hermes can make mistakes. Check important information.
@@ -140,6 +157,59 @@
       </main>
     </div>
 
-    <script type="module" src="./main.js"></script>
+    <div class="auth-modal" id="auth-modal" aria-hidden="true">
+      <div class="auth-backdrop" id="auth-backdrop"></div>
+      <section class="auth-dialog t-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <button class="auth-close" id="auth-close" aria-label="Close sign up dialog">&times;</button>
+        <p class="section-label">Truth Hermes access</p>
+        <h2 id="auth-title">Create your account</h2>
+        <p class="auth-copy" id="auth-copy">
+          Use your email address or mobile number to create a local demo account.
+        </p>
+
+        <div class="auth-switch-row">
+          <button class="auth-switch is-active" id="auth-mode-register" type="button">Sign up</button>
+          <button class="auth-switch" id="auth-mode-login" type="button">Log in</button>
+        </div>
+
+        <form class="auth-form" id="auth-form">
+          <label class="auth-field" id="auth-name-field">
+            <span>Display name</span>
+            <input id="auth-name" type="text" autocomplete="name" placeholder="Enter your name" />
+          </label>
+
+          <label class="auth-field">
+            <span>Email or mobile number</span>
+            <input
+              id="auth-identifier"
+              type="text"
+              autocomplete="username"
+              placeholder="name@example.com or +65 8123 4567"
+            />
+          </label>
+
+          <label class="auth-field">
+            <span>Password</span>
+            <input
+              id="auth-password"
+              type="password"
+              autocomplete="current-password"
+              placeholder="At least 6 characters"
+            />
+          </label>
+
+          <p class="auth-error is-hidden" id="auth-error"></p>
+
+          <button class="primary-button auth-submit" id="auth-submit" type="submit">Create account</button>
+        </form>
+
+        <p class="auth-meta" id="auth-meta">
+          Already have an account?
+          <button class="auth-inline-link" id="auth-meta-switch" type="button">Log in</button>
+        </p>
+      </section>
+    </div>
+
+    <script type="module" src="./main.js?v=19"></script>
   </body>
 </html>

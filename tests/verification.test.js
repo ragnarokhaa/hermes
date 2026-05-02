@@ -46,8 +46,8 @@ test("normalizes Cerul search results into the frontend result shape", () => {
   });
 
   assert.equal(result.query, "Sam Altman Sora realistic video");
-  assert.equal(result.status, "pending");
-  assert.equal(result.verdictLabel, "Need Review");
+  assert.equal(result.status, "true");
+  assert.equal(result.verdictLabel, "True");
   assert.equal(result.confidence, "80%");
   assert.match(result.summary, /Cerul found 1 video evidence result/);
   assert.equal(result.mediaEvidence.source, "OpenAI Sora: A Closer Look!");
@@ -55,4 +55,23 @@ test("normalizes Cerul search results into the frontend result shape", () => {
   assert.equal(result.mediaEvidence.keyframeUrl, "https://cdn.cerul.ai/frames/example/000.jpg");
   assert.equal(result.evidence[0].source, "OpenAI Sora: A Closer Look!");
   assert.equal(result.evidence[0].action, "Open source");
+});
+
+test("classifies Cerul confidence scores using the frontend authenticity thresholds", () => {
+  const high = normalizeCerulSearchResult({
+    query: "high confidence",
+    searchPayload: { results: [{ score: 0.79, title: "High confidence source" }] },
+  });
+  const medium = normalizeCerulSearchResult({
+    query: "medium confidence",
+    searchPayload: { results: [{ score: 0.7, title: "Medium confidence source" }] },
+  });
+  const low = normalizeCerulSearchResult({
+    query: "low confidence",
+    searchPayload: { results: [{ score: 0.39, title: "Low confidence source" }] },
+  });
+
+  assert.equal(high.verdictLabel, "True");
+  assert.equal(medium.verdictLabel, "Need Review");
+  assert.equal(low.verdictLabel, "Fake");
 });
