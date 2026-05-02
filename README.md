@@ -6,21 +6,10 @@ Truth Hermes 是一个面向"短视频时代假新闻"的事实核查 demo：用
 
 项目由三部分组成：
 
-- **Frontend/** — 静态前端 demo（零构建，原生 HTML/CSS/JS）
+- **Frontend/** — 前端（原生 HTML/CSS/JS）
 - **hermes-cerul-tech-news-package/** — Hermes agent 包（含 skills、scripts、agent 定义）
 - **config/** — Cerul MCP 接入配置示例
 
----
-
-## 快速开始
-
-只想看前端效果：
-
-```bash
-cd Frontend
-python3 -m http.server 5173
-# 打开 http://127.0.0.1:5173/index.html
-```
 
 页面内置 3 个预设案例可以直接点击体验：
 
@@ -86,7 +75,7 @@ mcp_servers:
 
 ```
 hermes/
-├── Frontend/                          # 静态前端 demo
+├── Frontend/                          # 前端
 │   ├── index.html
 │   ├── main.js                        # 含 cerulJudgmentLayer
 │   ├── styles.css
