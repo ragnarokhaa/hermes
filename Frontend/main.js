@@ -146,18 +146,19 @@ const casesRaw = [
 ];
 
 function cerulJudgmentLayer(caseData) {
-  const cerulTrueSignals = [
-    "official", "launch", "keynote", "announcement", "confirmed",
-    "livestream", "product page", "press reports", "verified",
+  const cerulStrongFakeSignals = [
+    "rumor", "no credible", "no evidence", "no official",
+    "no verified", "no source", "fabricated", "unverified",
+    "do not cite", "could not locate",
   ];
-  const cerulFakeSignals = [
-    "rumor", "no official", "no evidence", "social reposts",
-    "no credible", "unverified", "no source", "fabricated",
+  const cerulStrongTrueSignals = [
+    "official launch", "official announcement", "official event",
+    "launch livestream", "product page", "press reports",
+    "confirmed", "official keynote",
   ];
-
   const cerulMixedSignals = [
-    "misleading", "repost", "trimmed", "removed", "omitted",
-    "reframed", "out of context", "clip", "diverge",
+    "misleading", "reposted clip", "trimmed", "removed",
+    "omitted", "reframed", "out of context", "diverge",
   ];
 
   const haystack = [
@@ -171,23 +172,26 @@ function cerulJudgmentLayer(caseData) {
   let fakeScore = 0;
   let mixedScore = 0;
 
-  for (const signal of cerulTrueSignals) {
+  for (const signal of cerulStrongTrueSignals) {
     if (haystack.includes(signal)) trueScore++;
   }
-  for (const signal of cerulFakeSignals) {
+  for (const signal of cerulStrongFakeSignals) {
     if (haystack.includes(signal)) fakeScore++;
   }
   for (const signal of cerulMixedSignals) {
     if (haystack.includes(signal)) mixedScore++;
   }
 
-  if (mixedScore >= 2) {
+  if (fakeScore >= 2) {
+    return "fake";
+  }
+  if (mixedScore >= 2 && fakeScore < 2) {
     return "uncertain";
   }
-  if (trueScore > fakeScore && trueScore >= 2) {
+  if (trueScore >= 2 && fakeScore === 0) {
     return "true";
   }
-  if (fakeScore > trueScore && fakeScore >= 1) {
+  if (fakeScore >= 1 && trueScore < 2) {
     return "fake";
   }
   return "uncertain";
