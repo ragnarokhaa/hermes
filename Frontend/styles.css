@@ -2384,6 +2384,14 @@ textarea.input-error {
     linear-gradient(135deg, #dfd6ca, #bdb2a3 60%, #8f8577);
 }
 
+.keyframe-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .keyframe-preview::before,
 .keyframe-preview::after {
   content: "";
@@ -2405,6 +2413,18 @@ textarea.input-error {
   right: 18%;
   bottom: 12%;
   border-radius: 999px 999px 18px 18px;
+}
+
+.keyframe-preview:has(.keyframe-image)::before,
+.keyframe-preview:has(.keyframe-image)::after {
+  content: none;
+}
+
+.keyframe-preview .preview-time {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2;
 }
 
 .keyframe-card::after {
@@ -2439,6 +2459,7 @@ textarea.input-error {
 
 .keyframe-badge {
   position: absolute;
+  z-index: 2;
   top: 12px;
   left: 12px;
   display: inline-flex;

@@ -23,6 +23,7 @@ const casesRaw = [
       frameNote:
         "The presenter is demonstrating live voice interaction while the model responds on screen.",
       frameClass: "frame-stage",
+      keyframeUrl: "https://i.ytimg.com/vi/DQacCB9tDaw/hqdefault.jpg",
     },
     evidence: [
       {
@@ -71,6 +72,7 @@ const casesRaw = [
       frameNote:
         "No authenticated source footage exists for this claim, which is part of why the story is flagged as fake.",
       frameClass: "frame-archive",
+      keyframeUrl: "https://i.ytimg.com/vi/K1yLT08DIOA/hqdefault.jpg",
     },
     evidence: [
       {
@@ -117,6 +119,7 @@ const casesRaw = [
       frameNote:
         "The frame captures the presenter just before the omitted clarification about deployment conditions.",
       frameClass: "frame-clip",
+      keyframeUrl: "https://i.ytimg.com/vi/Y9cwnHor8es/hqdefault.jpg",
     },
     evidence: [
       {
@@ -220,6 +223,7 @@ let isRequestInFlight = false;
 let authMode = "register";
 let isPageTransitioning = false;
 let isInitialLoad = true;
+let selectedSampleId = null;
 
 const AUTH_USERS_KEY = "truth-hermes-users";
 const AUTH_SESSION_KEY = "truth-hermes-session";
@@ -484,6 +488,20 @@ function normalize(text) {
   return text.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
+function parseAuthenticityScore(value) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return Math.round(value <= 1 ? value * 100 : value);
+  }
+
+  const parsed = Number.parseFloat(String(value || "").replace("%", ""));
+  if (!Number.isFinite(parsed)) {
+    return 0;
+  }
+
+  return Math.round(parsed <= 1 ? parsed * 100 : parsed);
+}
+
+
 function classifyAuthenticity(score) {
   if (score < 40) {
     return {
@@ -509,13 +527,17 @@ function classifyAuthenticity(score) {
 }
 
 function withVerdict(result) {
-  const authenticity = Number.parseInt(result.authenticity, 10);
+  const rawAuthenticity = result.authenticity ?? result.authenticityLabel ?? result.confidence ?? 0;
+  const authenticity = parseAuthenticityScore(rawAuthenticity);
+  const classification = classifyAuthenticity(authenticity);
+  const authenticityLabel = result.authenticityLabel ||
+    (String(rawAuthenticity).includes("%") ? String(rawAuthenticity) : `${authenticity}%`);
 
   return {
     ...result,
-    ...classifyAuthenticity(authenticity),
+    ...classification,
     authenticity,
-    authenticityLabel: `${authenticity}%`,
+    authenticityLabel,
   };
 }
 
@@ -718,6 +740,7 @@ function workflowMarkup(data) {
     frameNote: "A key frame will appear here once a source video is verified.",
     frameClass: "frame-archive",
   };
+  const keyframeUrl = media.keyframeUrl || media.keyframe_url || "";
 
   return `
     <div class="verification-workflow">
@@ -760,6 +783,7 @@ function workflowMarkup(data) {
           <p class="section-label">Key Frame Screenshot</p>
           <h3>${escapeHtml(media.frameTimestamp)}</h3>
           <div class="keyframe-preview ${escapeHtml(media.frameClass)}">
+            ${keyframeUrl ? `<img class="keyframe-image" src="${escapeHtml(keyframeUrl)}" alt="Verified evidence key frame" loading="lazy" />` : ""}
             <span class="keyframe-badge">${escapeHtml(media.frameTitle)}</span>
             <span class="preview-time">${escapeHtml(media.frameTimestamp)}</span>
           </div>
@@ -979,16 +1003,67 @@ function resolveFollowUp(query) {
 }
 
 async function requestVerification(request) {
-  await new Promise((resolve) => {
-    window.setTimeout(resolve, 900);
-  });
-
-  if (request.isFollowUp) {
-    return resolveFollowUp(request.query);
+  if (request.sampleId) {
+    await new Promise((resolve) => {
+      window.setTimeout(resolve, 900);
+    });
+    return resolveInitialResult(request);
   }
 
-  return resolveInitialResult(request);
+  const response = await fetch("/api/verify", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(request),
+  });
+
+  let data = {};
+  try {
+    data = await response.json();
+  } catch {
+    data = {};
+  }
+
+  if (!response.ok) {
+    throw new Error(data.message || data.error || `Verification API returned ${response.status}`);
+  }
+
+  return withVerdict({
+    ...data,
+    id: data.id || `verification-${Date.now()}`,
+    speaker: data.speaker ?? request.speaker,
+    type: data.type ?? request.type,
+    query: data.query ?? request.query,
+    summary: data.summary || "Truth Hermes completed a live verification request.",
+    authenticity: data.authenticity ?? data.authenticityLabel ?? data.confidence ?? 0,
+    mediaEvidence: data.mediaEvidence || null,
+    evidence: Array.isArray(data.evidence) ? data.evidence : [],
+  });
 }
+
+function buildErrorResult(request, error) {
+  const message = error instanceof Error ? error.message : String(error || "Unknown error");
+
+  return withVerdict({
+    id: `verification-error-${Date.now()}`,
+    speaker: request.speaker,
+    type: request.type,
+    query: request.query,
+    summary: `Live verification could not complete: ${message}`,
+    authenticity: 50,
+    mediaEvidence: null,
+    evidence: [
+      {
+        type: "API Error",
+        source: "Truth Hermes verification API",
+        detail: "The live request failed before evidence could be returned.",
+        score: "0.00",
+      },
+    ],
+  });
+}
+
 
 function completeAuth(user) {
   const session = {
@@ -1093,7 +1168,15 @@ async function submitVerification() {
     query,
     speaker: elements.speakerInput.value.trim(),
     type: elements.contentType.value,
+    sampleId: selectedSampleId,
     isFollowUp: !!getActiveConversation()?.messages.some((item) => item.result),
+    conversationHistory: (getActiveConversation()?.messages || [])
+      .filter((item) => item.result)
+      .map((item) => ({
+        query: item.query,
+        verdict: item.result.verdictLabel,
+        authenticity: item.result.authenticity,
+      })),
   };
   const conversation = appendLoadingTurn(query);
   const currentRequest = ++requestSequence;
@@ -1107,6 +1190,10 @@ async function submitVerification() {
     }
 
     replaceLoadingTurn(conversation.id, result);
+  } catch (error) {
+    if (currentRequest === requestSequence) {
+      replaceLoadingTurn(conversation.id, buildErrorResult(request, error));
+    }
   } finally {
     isRequestInFlight = false;
   }
@@ -1116,6 +1203,7 @@ function startNewChat() {
   requestSequence += 1;
   isRequestInFlight = false;
   activeConversationId = null;
+  selectedSampleId = null;
   elements.quoteInput.value = "";
   resizeComposer();
   elements.speakerInput.value = "";
@@ -1159,6 +1247,7 @@ elements.logoutButton?.addEventListener("click", () => {
 elements.newChat?.addEventListener("click", startNewChat);
 elements.startDemo?.addEventListener("click", submitVerification);
 elements.quoteInput?.addEventListener("input", () => {
+  selectedSampleId = null;
   hideInputHint();
   resizeComposer();
 });
@@ -1180,6 +1269,7 @@ elements.caseList?.addEventListener("click", (event) => {
     return;
   }
 
+  selectedSampleId = match.id;
   elements.quoteInput.value = match.query;
   elements.speakerInput.value = match.speaker;
   elements.contentType.value = match.type;
