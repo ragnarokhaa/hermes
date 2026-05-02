@@ -1,4 +1,4 @@
-const cases = [
+const casesRaw = [
   {
     id: "openai-gpt4o-launch",
     speaker: "OpenAI",
@@ -143,7 +143,71 @@ const cases = [
       },
     ],
   },
-].map(withVerdict);
+];
+
+function cerulJudgmentLayer(caseData) {
+  const cerulTrueSignals = [
+    "official", "launch", "keynote", "announcement", "confirmed",
+    "livestream", "product page", "press reports", "verified",
+  ];
+  const cerulFakeSignals = [
+    "rumor", "no official", "no evidence", "social reposts",
+    "no credible", "unverified", "no source", "fabricated",
+  ];
+
+  const cerulMixedSignals = [
+    "misleading", "repost", "trimmed", "removed", "omitted",
+    "reframed", "out of context", "clip", "diverge",
+  ];
+
+  const haystack = [
+    caseData.summary,
+    ...(caseData.evidence || []).map((e) => `${e.type} ${e.source} ${e.detail}`),
+    caseData.mediaEvidence?.description || "",
+    caseData.mediaEvidence?.source || "",
+  ].join(" ").toLowerCase();
+
+  let trueScore = 0;
+  let fakeScore = 0;
+  let mixedScore = 0;
+
+  for (const signal of cerulTrueSignals) {
+    if (haystack.includes(signal)) trueScore++;
+  }
+  for (const signal of cerulFakeSignals) {
+    if (haystack.includes(signal)) fakeScore++;
+  }
+  for (const signal of cerulMixedSignals) {
+    if (haystack.includes(signal)) mixedScore++;
+  }
+
+  if (mixedScore >= 2) {
+    return "uncertain";
+  }
+  if (trueScore > fakeScore && trueScore >= 2) {
+    return "true";
+  }
+  if (fakeScore > trueScore && fakeScore >= 1) {
+    return "fake";
+  }
+  return "uncertain";
+}
+
+function generateAuthenticityScore(judgment) {
+  if (judgment === "true") {
+    return Math.floor(Math.random() * 29) + 71;
+  }
+  if (judgment === "fake") {
+    return Math.floor(Math.random() * 39) + 1;
+  }
+  return Math.floor(Math.random() * 31) + 40;
+}
+
+const cases = casesRaw.map((c) => {
+  const judgment = cerulJudgmentLayer(c);
+  const score = generateAuthenticityScore(judgment);
+  return withVerdict({ ...c, authenticity: score });
+});
 
 const conversations = [];
 let activeConversationId = null;
@@ -849,14 +913,13 @@ function resolveInitialResult(input = {}) {
     return match;
   }
 
-  return withVerdict({
+  const fallbackData = {
     id: "custom-fallback",
     speaker,
     type,
     query,
     summary:
       "This query does not match a preset demo case yet. In the full product, Hermes would now search across videos, transcripts, and reporting archives.",
-    authenticity: 61,
     mediaEvidence: null,
     evidence: [
       {
@@ -872,7 +935,10 @@ function resolveInitialResult(input = {}) {
         score: "0.38",
       },
     ],
-  });
+  };
+  const judgment = cerulJudgmentLayer(fallbackData);
+  const score = generateAuthenticityScore(judgment);
+  return withVerdict({ ...fallbackData, authenticity: score });
 }
 
 function resolveFollowUp(query) {
